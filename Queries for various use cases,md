@@ -1,0 +1,66 @@
+# 📋 SQL Queries for Clothing Store Database  
+📌 *Made by Manveer Kaur, St. Clair College, Toronto*  
+
+This file contains a collection of **SQL queries** used for interacting with the **Clothing Store Database**.  
+
+---
+
+## 📌 **SQL Queries**  
+
+```sql
+-- 1️⃣ View All Customers
+SELECT * FROM Customers;
+
+-- 2️⃣ View All Products with Category and Supplier Details
+SELECT p.product_name, c.category_name, s.supplier_name, p.price, p.stock_quantity 
+FROM Products p
+JOIN Categories c ON p.category_id = c.category_id
+JOIN Suppliers s ON p.supplier_id = s.supplier_id;
+
+-- 3️⃣ View Orders for a Specific Customer
+SELECT o.order_id, o.total_price, o.status, o.created_at
+FROM Orders o
+JOIN Customers c ON o.customer_id = c.customer_id
+WHERE c.customer_id = 1;  -- Replace with specific customer_id
+
+-- 4️⃣ View Products in an Order
+SELECT oi.order_id, p.product_name, oi.quantity, oi.price
+FROM Order_Items oi
+JOIN Products p ON oi.product_id = p.product_id
+WHERE oi.order_id = 1;  -- Replace with specific order_id
+
+-- 5️⃣ View Available Stock for a Product
+SELECT p.product_name, i.stock_quantity
+FROM Products p
+JOIN Inventory i ON p.product_id = i.product_id
+WHERE p.product_id = 1;  -- Replace with specific product_id
+
+-- 6️⃣ View Total Sales (Price * Quantity) for Each Product
+SELECT p.product_name, SUM(oi.quantity) AS total_sold, SUM(oi.quantity * oi.price) AS total_revenue
+FROM Order_Items oi
+JOIN Products p ON oi.product_id = p.product_id
+GROUP BY p.product_name;
+
+-- 7️⃣ View the Number of Orders for Each Customer
+SELECT c.first_name, c.last_name, COUNT(o.order_id) AS total_orders
+FROM Customers c
+JOIN Orders o ON c.customer_id = o.customer_id
+GROUP BY c.first_name, c.last_name;
+
+-- 8️⃣ View Orders with Status "Completed"
+SELECT o.order_id, c.first_name, c.last_name, o.total_price, o.status
+FROM Orders o
+JOIN Customers c ON o.customer_id = c.customer_id
+WHERE o.status = 'Completed';
+
+-- 9️⃣ View Products That Are Out of Stock
+SELECT p.product_name, i.stock_quantity
+FROM Products p
+JOIN Inventory i ON p.product_id = i.product_id
+WHERE i.stock_quantity = 0;
+
+-- 🔟 View the Most Expensive Product in Each Category
+SELECT c.category_name, MAX(p.price) AS highest_price
+FROM Products p
+JOIN Categories c ON p.category_id = c.category_id
+GROUP BY c.category_name;
